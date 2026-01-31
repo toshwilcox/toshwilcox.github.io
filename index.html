@@ -1,15 +1,352 @@
 <!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Pixel Test Site</title>
-  </head>
-  <body>
-    <h1>Pixel Test Site</h1>
-    <p>This site sends events to my collector.</p>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Powersports App</title>
+  <meta name="description" content="Powersports app landing page with temporary pixel tracking." />
+  <style>
+    :root { color-scheme: light; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: #0b0f17;
+      color: #e8eefc;
+    }
+    header {
+      padding: 28px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.02);
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(8px);
+    }
+    .wrap { max-width: 980px; margin: 0 auto; }
+    .brand {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .brand h1 { margin: 0; font-size: 18px; letter-spacing: 0.5px; }
+    .brand nav a {
+      color: #b9c6ff; text-decoration: none; margin-left: 12px;
+      opacity: 0.9;
+    }
+    .brand nav a:hover { opacity: 1; text-decoration: underline; }
 
-    <button id="cta">Click me</button>
+    main { padding: 40px 18px 80px; }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 22px;
+      align-items: start;
+    }
+    @media (max-width: 860px) { .hero { grid-template-columns: 1fr; } }
 
-    <script src="./pixel.js"></script>
-  </body>
+    .card {
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.03);
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+    .headline { margin: 0 0 10px; font-size: 34px; line-height: 1.1; }
+    .sub { margin: 0 0 18px; color: rgba(232,238,252,0.82); font-size: 16px; }
+
+    .btnrow { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+    button, .btnlink {
+      border: 0;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font: inherit;
+      cursor: pointer;
+      background: #5b7cfa;
+      color: #071023;
+      font-weight: 650;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    button.secondary, .btnlink.secondary {
+      background: rgba(255,255,255,0.10);
+      color: #e8eefc;
+      border: 1px solid rgba(255,255,255,0.14);
+      font-weight: 600;
+    }
+    button:hover, .btnlink:hover { filter: brightness(1.05); }
+    button:active, .btnlink:active { transform: translateY(1px); }
+
+    .list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .list li {
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: rgba(232,238,252,0.85);
+    }
+    .muted { color: rgba(232,238,252,0.65); }
+
+    footer {
+      padding: 30px 18px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      color: rgba(232,238,252,0.65);
+    }
+    code.inline {
+      padding: 2px 6px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="wrap brand">
+      <h1>Powersports App</h1>
+      <nav>
+        <a href="#features" data-track="nav_features">Features</a>
+        <a href="#demo" data-track="nav_demo">Demo</a>
+        <a href="#contact" data-track="nav_contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="card">
+        <h2 class="headline">Track website engagement (temporary pixel)</h2>
+        <p class="sub">
+          This is a lightweight client-side tracker for GitHub Pages: it captures <code class="inline">page_view</code>
+          and <code class="inline">click</code> events, shows a live badge, and stores events in LocalStorage.
+          Later you can POST these to your backend and write them to Azure SQL.
+        </p>
+
+        <div class="btnrow" id="demo">
+          <button id="cta-start" data-track="cta_start">Start Demo</button>
+          <button class="secondary" id="cta-lead" data-track="cta_lead">Capture Lead</button>
+          <a class="btnlink secondary" href="https://github.com/" target="_blank" rel="noreferrer" data-track="cta_external">
+            External Link
+          </a>
+        </div>
+
+        <p class="muted" style="margin-top: 14px;">
+          Tip: Click around the page and watch the badge count increase. Use Export to download the captured JSON.
+        </p>
+      </div>
+
+      <div class="card" id="features">
+        <h3 style="margin:0 0 12px;">What we’re capturing</h3>
+        <ul class="list">
+          <li><strong>page_view</strong> — URL, title, referrer, session ID</li>
+          <li><strong>click</strong> — tag, text snippet, id/classes, href (when applicable)</li>
+          <li><strong>custom</strong> — anything with <code class="inline">data-track</code> will include that label</li>
+        </ul>
+
+        <div style="margin-top: 14px;">
+          <label for="email" class="muted">Fake lead capture (demo only)</label>
+          <div style="display:flex; gap:10px; margin-top:8px;">
+            <input
+              id="email"
+              type="email"
+              placeholder="your@email.com"
+              style="
+                flex: 1;
+                border-radius: 12px;
+                border: 1px solid rgba(255,255,255,0.14);
+                background: rgba(255,255,255,0.05);
+                color: #e8eefc;
+                padding: 10px 12px;
+                outline: none;
+              "
+              data-track="lead_email_input"
+            />
+            <button class="secondary" id="btn-submit" data-track="lead_submit">Submit</button>
+          </div>
+          <p id="lead-status" class="muted" style="margin:10px 0 0;"></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="contact">
+    <div class="wrap">
+      <div>© <span id="year"></span> Powersports App</div>
+      <div class="muted" style="margin-top:6px;">
+        Temporary pixel storage: <code class="inline">localStorage</code>. Next step: send to an API and write to Azure SQL.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Tracker badge UI -->
+  <div id="ps-tracker-badge" style="
+    position: fixed;
+    right: 12px;
+    bottom: 12px;
+    z-index: 99999;
+    font: 12px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    background: rgba(20, 20, 20, 0.9);
+    color: #fff;
+    padding: 10px 12px;
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    max-width: 270px;
+  ">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span id="ps-tracker-dot" style="
+        width:10px; height:10px; border-radius:50%;
+        background:#aaa; display:inline-block;
+      "></span>
+      <strong>Powersports Pixel</strong>
+    </div>
+    <div id="ps-tracker-status" style="margin-top:6px; opacity:0.9;">
+      Initializing…
+    </div>
+    <div style="margin-top:8px; display:flex; gap:8px;">
+      <button id="ps-tracker-export" style="
+        cursor:pointer; border:0; border-radius:8px;
+        padding:6px 8px; font:inherit;
+      ">Export</button>
+      <button id="ps-tracker-clear" style="
+        cursor:pointer; border:0; border-radius:8px;
+        padding:6px 8px; font:inherit;
+      ">Clear</button>
+    </div>
+  </div>
+
+  <script>
+    // --- Page demo wiring ---
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    document.getElementById("cta-start").addEventListener("click", () => {
+      alert("Demo started. Click a few things and export the events.");
+    });
+
+    document.getElementById("btn-submit").addEventListener("click", () => {
+      const email = document.getElementById("email").value.trim();
+      document.getElementById("lead-status").textContent = email
+        ? `Captured demo lead for: ${email}`
+        : "Enter an email to simulate a lead.";
+    });
+  </script>
+
+  <script>
+    // --- Powersports Pixel (LocalStorage queue + on-page badge) ---
+    (() => {
+      const STORAGE_KEY = "ps_pixel_events_v1";
+      const MAX_EVENTS = 500;
+
+      const sessionId = (() => {
+        const k = "ps_session_id_v1";
+        let v = sessionStorage.getItem(k);
+        if (!v) {
+          v = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + "-" + Math.random().toString(16).slice(2));
+          sessionStorage.setItem(k, v);
+        }
+        return v;
+      })();
+
+      const badgeDot = document.getElementById("ps-tracker-dot");
+      const statusEl = document.getElementById("ps-tracker-status");
+      const exportBtn = document.getElementById("ps-tracker-export");
+      const clearBtn = document.getElementById("ps-tracker-clear");
+
+      function loadQueue() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
+        catch { return []; }
+      }
+
+      function saveQueue(q) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(q.slice(-MAX_EVENTS)));
+      }
+
+      function flashDot(color, ms = 250) {
+        const prev = badgeDot.style.background;
+        badgeDot.style.background = color;
+        setTimeout(() => badgeDot.style.background = prev || "#aaa", ms);
+      }
+
+      function summarize(q) {
+        const last = q[q.length - 1];
+        return `Captured ${q.length} event(s)${last ? ` • last: ${last.type}` : ""}`;
+      }
+
+      function safeText(el) {
+        const t = el?.innerText || el?.textContent || "";
+        return t.replace(/\s+/g, " ").trim().slice(0, 80) || null;
+      }
+
+      function track(type, props = {}) {
+        const evt = {
+          type,
+          ts: new Date().toISOString(),
+          url: location.href,
+          path: location.pathname,
+          referrer: document.referrer || null,
+          sessionId,
+          ...props
+        };
+
+        const q = loadQueue();
+        q.push(evt);
+        saveQueue(q);
+
+        statusEl.textContent = summarize(q);
+        flashDot("#22c55e");
+      }
+
+      // page view
+      window.addEventListener("load", () => {
+        track("page_view", { title: document.title || null });
+      });
+
+      // clicks
+      document.addEventListener("click", (e) => {
+        const tracked = e.target?.closest?.("[data-track]");
+        const el = tracked || e.target?.closest?.("a,button,input,select,textarea");
+
+        const tag = el ? el.tagName.toLowerCase() : (e.target?.tagName?.toLowerCase() || null);
+
+        track("click", {
+          tag,
+          trackLabel: tracked?.getAttribute?.("data-track") || null,
+          text: safeText(el) || safeText(e.target),
+          id: el?.id || e.target?.id || null,
+          classes: el?.className || e.target?.className || null,
+          href: el?.getAttribute?.("href") || null
+        });
+      }, true);
+
+      // export
+      exportBtn.addEventListener("click", () => {
+        const q = loadQueue();
+        const blob = new Blob([JSON.stringify(q, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `ps_pixel_events_${new Date().toISOString().replace(/[:.]/g, "-")}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        flashDot("#3b82f6");
+      });
+
+      // clear
+      clearBtn.addEventListener("click", () => {
+        localStorage.removeItem(STORAGE_KEY);
+        statusEl.textContent = "Cleared. Captured 0 event(s).";
+        flashDot("#f97316");
+      });
+
+      // init
+      const q0 = loadQueue();
+      badgeDot.style.background = "#aaa";
+      statusEl.textContent = summarize(q0);
+    })();
+  </script>
+</body>
 </html>
