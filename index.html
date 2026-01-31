@@ -3,206 +3,36 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Powersports App</title>
-  <meta name="description" content="Powersports app landing page with anonymous user tracking." />
-  <style>
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: #0b0f17;
-      color: #e8eefc;
-    }
-    header {
-      padding: 24px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-    main {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 40px 24px 100px;
-    }
-    h1 { margin: 0 0 10px; }
-    p { color: rgba(232,238,252,0.85); }
-
-    button {
-      padding: 10px 14px;
-      border-radius: 10px;
-      border: none;
-      cursor: pointer;
-      font: inherit;
-      font-weight: 600;
-      background: #5b7cfa;
-      color: #071023;
-      margin-right: 10px;
-    }
-    button.secondary {
-      background: rgba(255,255,255,0.1);
-      color: #e8eefc;
-      border: 1px solid rgba(255,255,255,0.15);
-    }
-  </style>
+  <title>Product Page Demo</title>
 </head>
+<body style="font-family:system-ui; padding:24px; max-width:720px; margin:0 auto;">
 
-<body>
-  <header>
-    <h1>Powersports App</h1>
-    <p>Anonymous website behavior tracking (MVP)</p>
-  </header>
-
-  <main>
-    <p>
-      Click around the page. Reload it. Come back tomorrow.
-      The <strong>anon_id</strong> stays the same.
-    </p>
-
-    <button data-track="cta_start">Start Demo</button>
-    <button class="secondary" data-track="cta_lead">Request Demo</button>
-  </main>
-
-  <!-- Tracker Badge -->
-  <div id="ps-tracker-badge" style="
-    position: fixed;
-    right: 14px;
-    bottom: 14px;
-    z-index: 99999;
-    background: rgba(20,20,20,0.9);
-    color: #fff;
-    padding: 12px 14px;
-    border-radius: 12px;
-    font: 12px system-ui;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-    max-width: 280px;
-  ">
-    <div style="display:flex; align-items:center; gap:8px;">
-      <span id="ps-dot" style="
-        width:10px; height:10px; border-radius:50%;
-        background:#aaa; display:inline-block;
-      "></span>
-      <strong>Powersports Pixel</strong>
-    </div>
-    <div id="ps-status" style="margin-top:6px; opacity:0.9;">
-      Initializing…
-    </div>
-    <div id="ps-ids" style="margin-top:6px; opacity:0.7;"></div>
-    <div style="margin-top:8px; display:flex; gap:8px;">
-      <button id="ps-export">Export</button>
-      <button id="ps-clear">Clear</button>
-    </div>
-  </div>
-
+  <!-- (1) Page context: this is how the pixel knows what page/product this is -->
   <script>
-    (() => {
-      const STORAGE_KEY = "ps_events_v1";
-      const ANON_KEY = "ps_anon_id_v1";
-      const MAX_EVENTS = 500;
-
-      // ---- persistent anon_id (months+) ----
-      const anonId = (() => {
-        let v = localStorage.getItem(ANON_KEY);
-        if (!v) {
-          v = crypto.randomUUID();
-          localStorage.setItem(ANON_KEY, v);
-        }
-        return v;
-      })();
-
-      // ---- per-session id (tab-level) ----
-      const sessionId = (() => {
-        const k = "ps_session_id_v1";
-        let v = sessionStorage.getItem(k);
-        if (!v) {
-          v = crypto.randomUUID();
-          sessionStorage.setItem(k, v);
-        }
-        return v;
-      })();
-
-      const dot = document.getElementById("ps-dot");
-      const status = document.getElementById("ps-status");
-      const ids = document.getElementById("ps-ids");
-      const exportBtn = document.getElementById("ps-export");
-      const clearBtn = document.getElementById("ps-clear");
-
-      function load() {
-        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
-        catch { return []; }
-      }
-
-      function save(q) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(q.slice(-MAX_EVENTS)));
-      }
-
-      function flash(color) {
-        const prev = dot.style.background;
-        dot.style.background = color;
-        setTimeout(() => dot.style.background = prev || "#aaa", 250);
-      }
-
-      function track(type, props = {}) {
-        const evt = {
-          type,
-          ts: new Date().toISOString(),
-          anon_id: anonId,
-          session_id: sessionId,
-          url: location.href,
-          path: location.pathname,
-          referrer: document.referrer || null,
-          ...props
-        };
-
-        const q = load();
-        q.push(evt);
-        save(q);
-
-        status.textContent = `Captured ${q.length} event(s) • last: ${type}`;
-        flash("#22c55e");
-      }
-
-      // ---- page view ----
-      window.addEventListener("load", () => {
-        track("page_view", { title: document.title });
-      });
-
-      // ---- clicks ----
-      document.addEventListener("click", (e) => {
-        const el = e.target.closest("[data-track],a,button");
-        if (!el) return;
-
-        track("click", {
-          tag: el.tagName.toLowerCase(),
-          trackLabel: el.getAttribute("data-track"),
-          text: (el.innerText || "").trim().slice(0, 80),
-          href: el.getAttribute("href")
-        });
-      }, true);
-
-      // ---- export ----
-      exportBtn.onclick = () => {
-        const q = load();
-        const blob = new Blob([JSON.stringify(q, null, 2)], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `ps_events_${new Date().toISOString().replace(/[:.]/g, "-")}.json`;
-        a.click();
-        URL.revokeObjectURL(url);
-        flash("#3b82f6");
-      };
-
-      // ---- clear ----
-      clearBtn.onclick = () => {
-        localStorage.removeItem(STORAGE_KEY);
-        status.textContent = "Cleared. Captured 0 events.";
-        flash("#f97316");
-      };
-
-      // ---- init badge ----
-      ids.innerHTML = `
-        anon_id: <code>${anonId.slice(0, 8)}…</code><br/>
-        session_id: <code>${sessionId.slice(0, 8)}…</code>
-      `;
-      status.textContent = `Ready.`;
-    })();
+    window.psDataLayer = {
+      page_type: "product",
+      product_id: "SKU-1234",
+      product_name: "Demo UTV",
+      category: "UTV",
+      price: 18999
+    };
   </script>
+
+  <h1>Demo Product Page</h1>
+  <p>This page represents a product page. The pixel will record:</p>
+  <ul>
+    <li><code>page_view</code></li>
+    <li><code>view_product</code> (because <code>page_type = "product"</code>)</li>
+    <li><code>click</code> events</li>
+  </ul>
+
+  <!-- (2) One simple button -->
+  <button data-track="cta_request_info" style="padding:10px 14px; border-radius:10px; cursor:pointer;">
+    Request Info
+  </button>
+
+  <!-- (3) Include the pixel once -->
+  <script src="./pixel.js" defer></script>
+
 </body>
 </html>
