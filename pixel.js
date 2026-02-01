@@ -1,6 +1,6 @@
 // ====== CONFIG ======
-const PIXEL_ENDPOINT = "pixel-functional-app-test-debcf3ctg4acgwez.westus2-01.azurewebsites.net/api/ingest";
-const PIXEL_CODE = "https://pixel-functional-app-test-debcf3ctg4acgwez.westus2-01.azurewebsites.net/api/ingest?code=QcOybpPguXMM_ySWD6TktprZYX2bIjXoZiqbCkOJHS9dAzFuQF6ejA==";
+const PIXEL_ENDPOINT = "https://pixel-functional-app-test-debcf3ctg4acgwez.westus2-01.azurewebsites.net/api/ingest";
+const PIXEL_CODE = "QcOybpPguXMM_ySWD6TktprZYX2bIjXoZiqbCkOJHS9dAzFuQF6ejA==";
 const DEALER_ID = "test-site";
 
 // ====== ID HELPERS ======
